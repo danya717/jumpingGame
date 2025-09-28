@@ -2,8 +2,8 @@ import arcade
 import random
 
 from cons import *
-from log import MainLog
-from log import MapLogs
+from platforms import MainPlat
+from platforms import MapPlats
 from characters import Monkey
 from clouds import Cloud
 from barriers import JumpBarrier
@@ -17,8 +17,7 @@ MONKEY_Y_LIMIT = 310
 class Game(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
-        self.log = MainLog()
-        # self.mapLogs = MapLogs()
+        self.platform = MainPlat()
         self.monkey = Monkey()
         self.jump_barrier = JumpBarrier()
         self.small_jump_barrier = SmallJumpBarrier()
@@ -28,31 +27,28 @@ class Game(arcade.Window):
         self.lose = False
         self.start_again = False
         self.monkey_jump = True
-        self.log_list = arcade.SpriteList()
+        self.platform_list = arcade.SpriteList()
+        self.map_platforms = MapPlats()
 
     def setup(self):
         if self.game:
             for i in range(5):
-                # self.mapLogs.center_x = 0
-                # self.mapLogs.center_x = random.randint(0, SCREEN_WIDTH)
-                map_logs = MapLogs()
-                map_logs.center_x = 0
-                map_logs.center_x = random.randint(0, SCREEN_WIDTH)
-                map_logs.center_y = i * DISTANCE + SCREEN_HEIGHT
-                self.log_list.append(map_logs)
+                self.map_platforms.center_y = i * DISTANCE + SCREEN_HEIGHT
+                self.map_platforms.center_x = random.randint(100, SCREEN_WIDTH)
+                self.platform_list.append(map_platforms)
 
     def on_draw(self):
         if self.game:
             self.clear()
             arcade.draw_rectangle_filled(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT, (100, 0, 200))
             self.cloud.draw()
-            self.log.draw()
-            # self.mapLogs.draw()
-            self.log_list.draw()
+            self.platform.draw()
+
+            self.map_platforms.draw()
+            self.platform_list.draw()
             self.monkey.draw()
             self.jump_barrier.draw()
             self.small_jump_barrier.draw()
-
 
             arcade.draw_text(f'SCORE: {self.score}', SCREEN_WIDTH - 445, SCREEN_HEIGHT - 20, (255, 255, 255), 15)
         if self.lose:
@@ -67,7 +63,6 @@ class Game(arcade.Window):
     def update(self, delta_time: float):
         if self.game:
             self.monkey.update()
-            # self.mapLogs.update()
             if self.monkey_jump:
                 self.monkey.change_y = MONKEY_JUMP
             #jump down for the monkey
@@ -83,15 +78,12 @@ class Game(arcade.Window):
             # if monkey goes under the screen it's lose
             if self.monkey.center_y < 0:
                 self.lose = True
-            #monkey can be on the main log
-            if arcade.check_for_collision(self.monkey, self.log):
+            #monkey can be on the main platform
+            if arcade.check_for_collision(self.monkey, self.platform):
                 self.monkey_jump = True
                 self.monkey.change_y = 0
-                self.monkey.center_y = self.log.center_y + 118
-            # if monkey get hit with the map log
-            # if arcade.check_for_collision(self.monkey, self.mapLogs):
-            #     self.lose = True
-            #monkey can be on the map log
+                self.monkey.center_y = self.platform.center_y + 118
+            #monkey can be on the map platforms
             if arcade.check_for_collision(self.monkey, self.small_jump_barrier):
                 self.monkey.center_y = self.small_jump_barrier.center_y + 28
                 self.monkey_jump = True
@@ -104,8 +96,12 @@ class Game(arcade.Window):
     def on_key_press(self, key: int, modifiers: int):
         if self.game:
             if key == arcade.key.A:
+                self.monkey.side = False
+                self.monkey.set_side()
                 self.monkey.change_x = -MONKEY_SPEED
             if key == arcade.key.D:
+                self.monkey.side = True
+                self.monkey.set_side()
                 self.monkey.change_x = MONKEY_SPEED
         if not self.game:
             if self.lose:
@@ -120,8 +116,6 @@ class Game(arcade.Window):
                 self.monkey.change_x = 0
             if key == arcade.key.D:
                 self.monkey.change_x = 0
-            # if key == arcade.key.SPACE:
-            #     self.monkey.change_y =
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         print(x, y)

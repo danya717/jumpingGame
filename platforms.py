@@ -1,22 +1,18 @@
 import arcade
 import random
-
-from arcade.examples.dual_stick_shooter import SCREEN_HEIGHT
-
 import cons
 
-class Log(arcade.Sprite):
+class Platform(arcade.Sprite):
     def __init__(self, scale):
         super().__init__("log.png", scale)
 
-class MainLog(Log):
+class MainPlat(Platform):
     def __init__(self):
         super().__init__(1)
         self.center_x = 215
         self.center_y = 30
 
-class MapLogs(Log):
+class MapPlats(Platform):
     def __init__(self):
         super().__init__(0.6)
-        # self.center_x = 100
-        # self.center_y = 200
+        # self.center_x = random.randint(0, SCREEN_WIDTH)
