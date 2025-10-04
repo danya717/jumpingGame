@@ -9,18 +9,13 @@ from clouds import Cloud
 from barriers import JumpBarrier
 from barriers import SmallJumpBarrier
 
-MONKEY_SPEED = 5
-MONKEY_JUMP = 5
-MONKEY_Y_LIMIT = 310
-
-
 class Game(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         self.platform = MainPlat()
         self.monkey = Monkey()
         self.jump_barrier = JumpBarrier()
-        self.small_jump_barrier = SmallJumpBarrier()
+        # self.small_jump_barrier = SmallJumpBarrier()
         self.cloud = Cloud()
         self.score = 0
         self.game = True
@@ -29,13 +24,23 @@ class Game(arcade.Window):
         self.monkey_jump = True
         self.platform_list = arcade.SpriteList()
         self.map_platforms = MapPlats()
+        self.barrier_list = arcade.SpriteList()
+        self.plat_barriers = SmallJumpBarrier()
 
     def setup(self):
         if self.game:
+            self.platform_list = arcade.SpriteList()
+            self.barrier_list = arcade.SpriteList()
             for i in range(5):
-                self.map_platforms.center_y = i * DISTANCE + SCREEN_HEIGHT
-                self.map_platforms.center_x = random.randint(100, SCREEN_WIDTH)
-                self.platform_list.append(map_platforms)
+                plat = MapPlats()
+                plat.center_y = i * DISTANCE + PLATS_DISTANCE
+                plat.center_x = random.randint(100, SCREEN_WIDTH - MAX_WIDTH_DISTANCE)
+
+                self.platform_list.append(plat)
+                barriers = SmallJumpBarrier()
+                barriers.center_y = plat.center_y + DISTANCE_BETWEEN_PLATS
+                barriers.center_x = plat.center_x
+                self.barrier_list.append(barriers)
 
     def on_draw(self):
         if self.game:
@@ -43,12 +48,11 @@ class Game(arcade.Window):
             arcade.draw_rectangle_filled(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT, (100, 0, 200))
             self.cloud.draw()
             self.platform.draw()
-
-            self.map_platforms.draw()
             self.platform_list.draw()
+            self.barrier_list.draw()
             self.monkey.draw()
             self.jump_barrier.draw()
-            self.small_jump_barrier.draw()
+            # self.small_jump_barrier.draw()
 
             arcade.draw_text(f'SCORE: {self.score}', SCREEN_WIDTH - 445, SCREEN_HEIGHT - 20, (255, 255, 255), 15)
         if self.lose:
@@ -83,15 +87,16 @@ class Game(arcade.Window):
                 self.monkey_jump = True
                 self.monkey.change_y = 0
                 self.monkey.center_y = self.platform.center_y + 118
-            #monkey can be on the map platforms
-            if arcade.check_for_collision(self.monkey, self.small_jump_barrier):
-                self.monkey.center_y = self.small_jump_barrier.center_y + 28
+            # configure the jump barrier
+            if self.monkey.center_y < self.platform_list[0].center_y:
+                self.jump_barrier.center_y = 300
+            #monkey can be on the map platform
+            hit_list = arcade.check_for_collision_with_list(self.monkey, self.platform_list)
+            if hit_list:
+                self.jump_barrier.center_y = 450
+                self.monkey.center_y = self.platform_list[0].center_y + 80
                 self.monkey_jump = True
-                self.jump_barrier.center_y = 460
-                self.score = 10
-            # configuration the jump barrier
-            if self.monkey.center_y < self.small_jump_barrier.center_y:
-                self.jump_barrier.center_y = 350
+
 
     def on_key_press(self, key: int, modifiers: int):
         if self.game:
@@ -106,8 +111,15 @@ class Game(arcade.Window):
         if not self.game:
             if self.lose:
                 if key == arcade.key.SPACE:
-                    print("true")
                     self.game = True
+                    self.lose = False
+                    self.score = 0
+                    self.monkey.change_x = 0
+                    self.monkey.change_y = 0
+                    self.monkey.center_x = 218
+                    self.monkey.center_y = 147
+                    self.monkey_jump = True
+                    self.setup()
 
 
     def on_key_release(self, key: int, modifiers: int):
@@ -122,4 +134,5 @@ class Game(arcade.Window):
 
 
 window = Game(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+window.setup()
 window.run()

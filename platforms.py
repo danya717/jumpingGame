@@ -1,6 +1,5 @@
 import arcade
-import random
-import cons
+from cons import *
 
 class Platform(arcade.Sprite):
     def __init__(self, scale):
@@ -9,8 +8,8 @@ class Platform(arcade.Sprite):
 class MainPlat(Platform):
     def __init__(self):
         super().__init__(1)
-        self.center_x = 215
-        self.center_y = 30
+        self.center_x = PLAT_CENTER_X
+        self.center_y = PLAT_CENTER_Y
 
 class MapPlats(Platform):
     def __init__(self):

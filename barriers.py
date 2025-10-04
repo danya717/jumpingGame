@@ -9,7 +9,6 @@ class JumpBarrier(Barrier):
     def __init__(self):
         super().__init__(1.2)
         self.center_x = 225
-        self.center_y = 350
 
 class SmallBarrier(arcade.Sprite):
     def __init__(self, scale):

@@ -1,10 +1,12 @@
 import arcade
+from cons import *
+
 
 class Monkey(arcade.Sprite):
     def __init__(self):
         super().__init__('monkey 2d.png', scale=0.06)
-        self.center_x = 218
-        self.center_y = 147
+        self.center_x = CHAR_CENTER_X
+        self.center_y = CHAR_CENTER_Y
         self.side = True
         self.left_texture = arcade.load_texture('monkey 2d.png', flipped_horizontally=True)
         self.right_texture = arcade.load_texture('monkey 2d.png')
