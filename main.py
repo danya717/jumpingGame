@@ -91,10 +91,15 @@ class Game(arcade.Window):
             if self.monkey.center_y < self.platform_list[0].center_y:
                 self.jump_barrier.center_y = 300
             #monkey can be on the map platform
-            hit_list = arcade.check_for_collision_with_list(self.monkey, self.platform_list)
-            if hit_list:
+            # hit_list = arcade.check_for_collision_with_list(self.monkey, self.platform_list)
+            # if hit_list:
+            if arcade.check_for_collision(self.monkey, self.platform_list[0]):
                 self.jump_barrier.center_y = 450
                 self.monkey.center_y = self.platform_list[0].center_y + 80
+                self.monkey_jump = True
+            if arcade.check_for_collision(self.monkey, self.platform_list[1]):
+                self.jump_barrier.center_y = 600
+                self.monkey.center_y = self.platform_list[1].center_y + 80
                 self.monkey_jump = True
 
 
