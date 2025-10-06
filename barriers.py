@@ -2,7 +2,7 @@ import arcade
 
 class Barrier(arcade.Sprite):
     def __init__(self, scale):
-        super().__init__('jumpBarrier.png', scale)
+        super().__init__('images/jumpBarrier.png', scale)
         # self.alpha = True
 
 class JumpBarrier(Barrier):
@@ -12,7 +12,7 @@ class JumpBarrier(Barrier):
 
 class SmallBarrier(arcade.Sprite):
     def __init__(self, scale):
-        super().__init__('small_barrier.png', scale)
+        super().__init__('images/small_barrier.png', scale)
         # self.alpha = True
 
 class SmallJumpBarrier(SmallBarrier):

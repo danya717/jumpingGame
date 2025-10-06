@@ -3,7 +3,7 @@ from cons import *
 
 class Platform(arcade.Sprite):
     def __init__(self, scale):
-        super().__init__("log.png", scale)
+        super().__init__("images/log.png", scale)
 
 class MainPlat(Platform):
     def __init__(self):

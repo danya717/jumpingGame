@@ -12,16 +12,17 @@ from barriers import SmallJumpBarrier
 class Game(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
+        self.bg = arcade.load_texture("images/mainBg.png")
         self.platform = MainPlat()
         self.monkey = Monkey()
         self.jump_barrier = JumpBarrier()
-        # self.small_jump_barrier = SmallJumpBarrier()
         self.cloud = Cloud()
         self.score = 0
         self.game = True
         self.lose = False
         self.start_again = False
         self.monkey_jump = True
+        # self.jump_barrier_can_go_y = 0
         self.platform_list = arcade.SpriteList()
         self.map_platforms = MapPlats()
         self.barrier_list = arcade.SpriteList()
@@ -45,7 +46,7 @@ class Game(arcade.Window):
     def on_draw(self):
         if self.game:
             self.clear()
-            arcade.draw_rectangle_filled(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT, (100, 0, 200))
+            arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT, self.bg)
             self.cloud.draw()
             self.platform.draw()
             self.platform_list.draw()
@@ -67,52 +68,73 @@ class Game(arcade.Window):
     def update(self, delta_time: float):
         if self.game:
             self.monkey.update()
+            # monkey can jump up
             if self.monkey_jump:
                 self.monkey.change_y = MONKEY_JUMP
-            #jump down for the monkey
+
+            #jump can jump down
             if arcade.check_for_collision(self.monkey, self.jump_barrier):
                 self.monkey_jump = False
                 self.monkey.change_y = -MONKEY_JUMP
-            #monkey can't go beyond the right screen
+
+            #check if monkey can't go beyond the right screen
             if self.monkey.center_x > SCREEN_WIDTH - 20:
                 self.monkey.change_x = 0
-            # monkey can't go beyond the left screen
+
+            # check if monkey can't go beyond the left screen
             if self.monkey.center_x < 0 + 20:
                 self.monkey.change_x = 0
-            # if monkey goes under the screen it's lose
+
+            # check if monkey goes under the screen it's lose
             if self.monkey.center_y < 0:
                 self.lose = True
-            #monkey can be on the main platform
+
+            #check that monkey can be on the main platform
             if arcade.check_for_collision(self.monkey, self.platform):
                 self.monkey_jump = True
                 self.monkey.change_y = 0
                 self.monkey.center_y = self.platform.center_y + 118
+
             # configure the jump barrier
             if self.monkey.center_y < self.platform_list[0].center_y:
                 self.jump_barrier.center_y = 300
-            #monkey can be on the map platform
-            # hit_list = arcade.check_for_collision_with_list(self.monkey, self.platform_list)
-            # if hit_list:
-            if arcade.check_for_collision(self.monkey, self.platform_list[0]):
-                self.jump_barrier.center_y = 450
-                self.monkey.center_y = self.platform_list[0].center_y + 80
-                self.monkey_jump = True
-            if arcade.check_for_collision(self.monkey, self.platform_list[1]):
-                self.jump_barrier.center_y = 600
-                self.monkey.center_y = self.platform_list[1].center_y + 80
-                self.monkey_jump = True
+
+            # check collision that monkey can be on the platform 0
+            # if arcade.check_for_collision(self.monkey, self.platform_list[0]):
+            #     self.jump_barrier.center_y = 450
+            #     self.monkey.center_y = self.platform_list[0].center_y + 80
+            #     self.monkey_jump = True
+            # check collision that monkey can be on the platform 1
+            # if arcade.check_for_collision(self.monkey, self.platform_list[1]):
+            #     self.jump_barrier.center_y = 600
+            #     self.monkey.center_y = self.platform_list[1].center_y + 80
+            #     self.monkey_jump = True
+
+            for plat in self.platform_list:
+                if arcade.check_for_collision(self.monkey, plat):
+                    self.jump_barrier.center_y += 140
+                    self.monkey.center_y = plat.center_y + 80
+                    self.monkey_jump = True
+
+
+
 
 
     def on_key_press(self, key: int, modifiers: int):
         if self.game:
+            # monkey can go left
             if key == arcade.key.A:
                 self.monkey.side = False
                 self.monkey.set_side()
                 self.monkey.change_x = -MONKEY_SPEED
+
+            # monkey can go right
             if key == arcade.key.D:
                 self.monkey.side = True
                 self.monkey.set_side()
                 self.monkey.change_x = MONKEY_SPEED
+
+        # game can start again after lose
         if not self.game:
             if self.lose:
                 if key == arcade.key.SPACE:
