@@ -23,6 +23,8 @@ class Game(arcade.Window):
         self.lose = False
         self.start_again = False
         self.monkey_jump = True
+        self.can_score = True
+        self.main_platform_draw = True
         # self.jump_barrier_can_go_y = 0
         self.platform_list = arcade.SpriteList()
         self.barrier_list = arcade.SpriteList()
@@ -50,7 +52,8 @@ class Game(arcade.Window):
             self.clear()
             arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT, self.bg)
             self.cloud.draw()
-            self.platform.draw()
+            if self.main_platform_draw:
+                self.platform.draw()
             self.platform_list.draw()
             # self.barrier_list.draw()
             self.monkey.draw()
@@ -92,29 +95,21 @@ class Game(arcade.Window):
                 self.lose = True
 
             #check that monkey can be on the main platform
-            if arcade.check_for_collision(self.monkey, self.platform):
-                self.monkey_jump = True
-                self.monkey.change_y = 0
-                self.monkey.center_y = self.platform.center_y + MAIN_PLATFORM_DISTANCE
+            if self.main_platform_draw:
+                if arcade.check_for_collision(self.monkey, self.platform):
+                    self.monkey_jump = True
+                    self.monkey.change_y = 0
+                    self.monkey.center_y = self.platform.center_y + MAIN_PLATFORM_DISTANCE
 
             # configure the jump barrier
             if self.monkey.center_y < self.platform_list[0].center_y:
                 self.jump_barrier.center_y = START_JUMP_BARRIER_DISTANCE
 
-            # check collision that monkey can be on the platform 1
-            # if arcade.check_for_collision(self.monkey, self.platform_list[0]):
-            #     self.jump_barrier.center_y = 450
-            #     self.monkey.center_y = self.platform_list[0].center_y + 80
-            #     self.monkey_jump = True
-            # check collision that monkey can be on the platform 2
-            # if arcade.check_for_collision(self.monkey, self.platform_list[1]):
-            #     self.jump_barrier.center_y = 600
-            #     self.monkey.center_y = self.platform_list[1].center_y + 80
-            #     self.monkey_jump = True
-
             for plat in self.platform_list:
                 if arcade.check_for_collision(self.monkey, plat):
                     dy = DISTANCE
+                    # self.platform.kill()
+                    self.main_platform_draw = False
                     self.jump_barrier.center_y = MONKEY_Y_LIMIT
                     self.monkey.center_y = plat.center_y + DISTANCE_TO_TOP_PLAT
                     self.monkey_jump = True
@@ -152,6 +147,7 @@ class Game(arcade.Window):
         if not self.game:
             if self.lose:
                 if key == arcade.key.SPACE:
+                    self.main_platform_draw = True
                     self.game = True
                     self.lose = False
                     self.score = 0
