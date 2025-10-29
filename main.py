@@ -25,6 +25,7 @@ class Game(arcade.Window):
         self.monkey_jump = True
         self.can_score = True
         self.main_platform_draw = True
+        self.times_can_jump_on_plat = 0
         # self.jump_barrier_can_go_y = 0
         self.platform_list = arcade.SpriteList()
         self.barrier_list = arcade.SpriteList()
@@ -104,19 +105,20 @@ class Game(arcade.Window):
             # configure the jump barrier
             if self.monkey.center_y < self.platform_list[0].center_y:
                 self.jump_barrier.center_y = START_JUMP_BARRIER_DISTANCE
-
             for plat in self.platform_list:
                 if arcade.check_for_collision(self.monkey, plat):
-                    dy = DISTANCE
-                    # self.platform.kill()
-                    self.main_platform_draw = False
-                    self.jump_barrier.center_y = MONKEY_Y_LIMIT
                     self.monkey.center_y = plat.center_y + DISTANCE_TO_TOP_PLAT
                     self.monkey_jump = True
-                    for p in self.platform_list:
-                        p.center_y -= dy
-                        if p.center_y < 0:
-                            p.center_y = SCREEN_HEIGHT
+                    self.times_can_jump_on_plat += 1
+                    print(self.times_can_jump_on_plat)
+                    if self.times_can_jump_on_plat > 10:
+                        dy = DISTANCE
+                        self.main_platform_draw = False
+                        # self.jump_barrier.center_y = MONKEY_Y_LIMIT
+                        for p in self.platform_list:
+                            p.center_y -= dy
+                            if p.center_y < 0:
+                                p.center_y = SCREEN_HEIGHT + 50
 
                     # for b in self.barrier_list:
                     #     b.center_y -= dy
