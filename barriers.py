@@ -10,6 +10,7 @@ class JumpBarrier(Barrier):
         super().__init__(1.2)
         self.center_x = 225
 
+
 class SmallBarrier(arcade.Sprite):
     def __init__(self, scale):
         super().__init__('images/small_barrier.png', scale)

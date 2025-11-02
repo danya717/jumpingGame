@@ -4,7 +4,7 @@ from cons import *
 
 class Monkey(arcade.Sprite):
     def __init__(self):
-        super().__init__('images/monkey 2d.png', scale=0.06)
+        super().__init__('images/monkey 2d.png', scale=0.05)
         self.center_x = CHAR_CENTER_X
         self.center_y = CHAR_CENTER_Y
         self.side = True

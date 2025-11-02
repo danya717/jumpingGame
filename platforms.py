@@ -7,7 +7,7 @@ class Platform(arcade.Sprite):
 
 class MainPlat(Platform):
     def __init__(self):
-        super().__init__(1)
+        super().__init__(0.8)
         self.center_x = PLAT_CENTER_X
         self.center_y = PLAT_CENTER_Y
 
