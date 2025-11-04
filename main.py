@@ -34,12 +34,14 @@ class Game(arcade.Window):
         # self.engine = PhysicsEnginePlatformer(self.monkey, self.platform_list, GRAVITY)
         self.time = time.time()
         self.last_platform = None
+        self.update_start_plats = False
 
         # self.uses = 0
         # self.max_uses = 5
 
     def setup(self):
         if self.game:
+            self.update_start_plats = True
             self.jump_barrier.center_y = START_JUMP_BARRIER_DISTANCE
             self.platform_list = arcade.SpriteList()
             self.barrier_list = arcade.SpriteList()
@@ -148,7 +150,7 @@ class Game(arcade.Window):
                         if not hasattr(plat, "scored"):
                             plat.scored = False
                         plat.uses += 1
-
+                        self.score += 10
                         self.times_can_jump_on_plat += 1
                         if plat.uses >= plat.max_uses:
                             self.platform_list.remove(plat)
@@ -166,7 +168,7 @@ class Game(arcade.Window):
                         for p in self.platform_list:
                             p.center_y -= dy
                             if p.center_y < 0:
-                                p.center_y = SCREEN_HEIGHT + 50
+                                p.center_y = SCREEN_HEIGHT - 35
                         for p in self.plat_list:
                             p.center_y -= dy
 
@@ -210,6 +212,7 @@ class Game(arcade.Window):
                     self.monkey.center_x = 218
                     self.monkey.center_y = 147
                     self.monkey_jump = True
+                    self.update_start_plats = True
                     self.setup()
 
 
